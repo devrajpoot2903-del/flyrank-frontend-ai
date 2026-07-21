@@ -1,6 +1,18 @@
 # FlyRank Front-End AI Engineering
 
-This repository is created as part of the FlyRank Front-End AI Engineering Internship.
+## Tech Stack
+
+- HTML
+- CSS
+- JavaScript
+- Node.js
+- Git
+- GitHub
+- Cursor AI
+
+## Purpose
+
+This repository is created for the FlyRank Front-End AI Engineering Internship.
 
 ## Author
 
