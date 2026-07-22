@@ -1,121 +1,200 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+const styles = {
+  main: {
+    maxWidth: '400px',
+    margin: '40px auto',
+    padding: '24px',
+    fontFamily: 'sans-serif',
+  },
+  title: {
+    margin: '0 0 20px',
+    fontSize: '24px',
+  },
+  field: {
+    marginBottom: '16px',
+  },
+  label: {
+    display: 'block',
+    marginBottom: '6px',
+    fontSize: '14px',
+    fontWeight: 500,
+  },
+  input: {
+    width: '100%',
+    padding: '8px 12px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    fontSize: '14px',
+    boxSizing: 'border-box',
+  },
+  inputError: {
+    borderColor: '#dc2626',
+  },
+  error: {
+    margin: '6px 0 0',
+    fontSize: '13px',
+    color: '#dc2626',
+  },
+  button: {
+    padding: '8px 16px',
+    backgroundColor: '#2563eb',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    fontSize: '14px',
+    cursor: 'pointer',
+  },
+  buttonDisabled: {
+    backgroundColor: '#93c5fd',
+    cursor: 'not-allowed',
+  },
+  success: {
+    margin: '0 0 16px',
+    padding: '10px 12px',
+    backgroundColor: '#dcfce7',
+    color: '#166534',
+    borderRadius: '4px',
+    fontSize: '14px',
+  },
+}
+
+function validateName(name) {
+  if (!name.trim()) {
+    return 'Name is required'
+  }
+  return ''
+}
+
+function validateEmail(email) {
+  if (!email.trim()) {
+    return 'Email is required'
+  }
+  if (!EMAIL_REGEX.test(email)) {
+    return 'Please enter a valid email address'
+  }
+  return ''
+}
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [errors, setErrors] = useState({ name: '', email: '' })
+  const [successMessage, setSuccessMessage] = useState('')
+
+  const isValid = !validateName(name) && !validateEmail(email)
+
+  const handleNameChange = (event) => {
+    setName(event.target.value)
+    setErrors((prev) => ({ ...prev, name: '' }))
+    setSuccessMessage('')
+  }
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value)
+    setErrors((prev) => ({ ...prev, email: '' }))
+    setSuccessMessage('')
+  }
+
+  const handleNameBlur = () => {
+    setErrors((prev) => ({ ...prev, name: validateName(name) }))
+  }
+
+  const handleEmailBlur = () => {
+    setErrors((prev) => ({ ...prev, email: validateEmail(email) }))
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+
+    const nameError = validateName(name)
+    const emailError = validateEmail(email)
+
+    setErrors({ name: nameError, email: emailError })
+
+    if (!nameError && !emailError) {
+      setSuccessMessage('Settings saved successfully')
+    }
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+    <main style={styles.main}>
+      <form onSubmit={handleSubmit} noValidate>
+        <h1 style={styles.title}>Settings</h1>
+
+        {successMessage && (
+          <p role="status" style={styles.success}>
+            {successMessage}
           </p>
+        )}
+
+        <div style={styles.field}>
+          <label htmlFor="name" style={styles.label}>
+            Name
+          </label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            value={name}
+            onChange={handleNameChange}
+            onBlur={handleNameBlur}
+            required
+            aria-invalid={Boolean(errors.name)}
+            aria-describedby={errors.name ? 'name-error' : undefined}
+            style={{
+              ...styles.input,
+              ...(errors.name ? styles.inputError : {}),
+            }}
+          />
+          {errors.name && (
+            <p id="name-error" style={styles.error}>
+              {errors.name}
+            </p>
+          )}
         </div>
+
+        <div style={styles.field}>
+          <label htmlFor="email" style={styles.label}>
+            Email
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            value={email}
+            onChange={handleEmailChange}
+            onBlur={handleEmailBlur}
+            required
+            aria-invalid={Boolean(errors.email)}
+            aria-describedby={errors.email ? 'email-error' : undefined}
+            style={{
+              ...styles.input,
+              ...(errors.email ? styles.inputError : {}),
+            }}
+          />
+          {errors.email && (
+            <p id="email-error" style={styles.error}>
+              {errors.email}
+            </p>
+          )}
+        </div>
+
         <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+          type="submit"
+          disabled={!isValid}
+          style={{
+            ...styles.button,
+            ...(!isValid ? styles.buttonDisabled : {}),
+          }}
         >
-          Count is {count}
+          Save
         </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      </form>
+    </main>
   )
 }
 
