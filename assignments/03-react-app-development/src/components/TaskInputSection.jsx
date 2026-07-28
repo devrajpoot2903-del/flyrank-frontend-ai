@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { DEFAULT_PRIORITY } from '../utils/taskHelpers'
 
 function TaskInputSection({ onAddTask }) {
   const [title, setTitle] = useState('')
   const [priority, setPriority] = useState(DEFAULT_PRIORITY)
+  const inputRef = useRef(null)
 
   const trimmedTitle = title.trim()
   const canSubmit = trimmedTitle.length > 0
@@ -18,6 +19,7 @@ function TaskInputSection({ onAddTask }) {
     onAddTask(trimmedTitle, priority)
     setTitle('')
     setPriority(DEFAULT_PRIORITY)
+    inputRef.current?.focus()
   }
 
   return (
@@ -29,6 +31,7 @@ function TaskInputSection({ onAddTask }) {
             Task Name
           </label>
           <input
+            ref={inputRef}
             id="task-name"
             type="text"
             className="text-input"

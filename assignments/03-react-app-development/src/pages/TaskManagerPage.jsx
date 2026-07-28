@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import AppHeader from '../components/AppHeader'
 import FilterSection from '../components/FilterSection'
 import SearchSection from '../components/SearchSection'
@@ -8,10 +8,25 @@ import TaskListSection from '../components/TaskListSection'
 import { createTask } from '../utils/taskHelpers'
 import '../styles/task-manager.css'
 
+const STORAGE_KEY = 'smart-task-manager-tasks'
+
+function loadTasks() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    return stored ? JSON.parse(stored) : []
+  } catch {
+    return []
+  }
+}
+
 function TaskManagerPage() {
-  const [tasks, setTasks] = useState([])
+  const [tasks, setTasks] = useState(loadTasks)
   const [searchQuery, setSearchQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState('All')
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
+  }, [tasks])
 
   const handleAddTask = (title, priority) => {
     const task = createTask(title, priority)
