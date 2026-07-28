@@ -419,16 +419,19 @@
 .priority-badge--low {
   background: #ecfdf5;
   color: #059669;
+  border: 1px solid #a7f3d0;
 }
 
 .priority-badge--medium {
   background: var(--tm-warning-light);
   color: var(--tm-warning);
+  border: 1px solid #fcd34d;
 }
 
 .priority-badge--high {
   background: #fef2f2;
   color: #dc2626;
+  border: 1px solid #fecaca;
 }
 
 .status-badge--pending {

@@ -10,6 +10,8 @@ import '../styles/task-manager.css'
 
 function TaskManagerPage() {
   const [tasks, setTasks] = useState([])
+  const [searchQuery, setSearchQuery] = useState('')
+  const [activeFilter, setActiveFilter] = useState('All')
 
   const handleAddTask = (title, priority) => {
     const task = createTask(title, priority)
@@ -33,18 +35,34 @@ function TaskManagerPage() {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId))
   }
 
+  const query = searchQuery.trim().toLowerCase()
+
+  const visibleTasks = tasks.filter((task) => {
+    const matchesFilter =
+      activeFilter === 'All' ||
+      (activeFilter === 'Completed' && task.completed) ||
+      (activeFilter === 'Pending' && !task.completed)
+
+    const matchesSearch = query === '' || task.title.toLowerCase().includes(query)
+
+    return matchesFilter && matchesSearch
+  })
+
+  const hasActiveSearch = query !== '' || activeFilter !== 'All'
+
   return (
     <div className="task-manager">
       <AppHeader />
       <main className="task-manager__main">
         <StatisticsSection />
         <TaskInputSection onAddTask={handleAddTask} />
-        <SearchSection />
-        <FilterSection />
+        <SearchSection value={searchQuery} onChange={setSearchQuery} />
+        <FilterSection activeFilter={activeFilter} onFilterChange={setActiveFilter} />
         <TaskListSection
-          tasks={tasks}
+          tasks={visibleTasks}
           onToggleComplete={handleToggleComplete}
           onDeleteTask={handleDeleteTask}
+          hasActiveSearch={hasActiveSearch}
         />
       </main>
     </div>

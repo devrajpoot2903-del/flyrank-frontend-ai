@@ -1,4 +1,4 @@
-function SearchSection() {
+function SearchSection({ value, onChange }) {
   return (
     <section className="search-section" aria-label="Search tasks">
       <label htmlFor="task-search" className="visually-hidden">
@@ -24,6 +24,8 @@ function SearchSection() {
           type="search"
           className="text-input search-section__input"
           placeholder="Search tasks..."
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
         />
       </div>
     </section>

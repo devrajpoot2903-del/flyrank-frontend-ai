@@ -1,8 +1,13 @@
 import EmptyState from './EmptyState'
 import TaskCard from './TaskCard'
 
-function TaskListSection({ tasks, onToggleComplete, onDeleteTask }) {
+function TaskListSection({ tasks, onToggleComplete, onDeleteTask, hasActiveSearch }) {
   const hasTasks = tasks.length > 0
+
+  const emptyMessage = hasActiveSearch ? 'No matching tasks found.' : 'No tasks yet'
+  const emptyHint = hasActiveSearch
+    ? 'Try a different search term or filter.'
+    : 'Add a task above to get started'
 
   return (
     <section className="task-list-section" aria-label="Task list">
@@ -23,7 +28,7 @@ function TaskListSection({ tasks, onToggleComplete, onDeleteTask }) {
             ))}
           </ul>
         ) : (
-          <EmptyState />
+          <EmptyState message={emptyMessage} hint={emptyHint} />
         )}
       </div>
     </section>

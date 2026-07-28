@@ -1,4 +1,4 @@
-function EmptyState() {
+function EmptyState({ message = 'No tasks yet', hint = 'Add a task above to get started' }) {
   return (
     <div className="empty-state">
       <div className="empty-state__icon" aria-hidden="true">
@@ -15,8 +15,8 @@ function EmptyState() {
           <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
         </svg>
       </div>
-      <p className="empty-state__message">No tasks yet</p>
-      <p className="empty-state__hint">Add a task above to get started</p>
+      <p className="empty-state__message">{message}</p>
+      <p className="empty-state__hint">{hint}</p>
     </div>
   )
 }
