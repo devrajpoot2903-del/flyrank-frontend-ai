@@ -54,7 +54,7 @@ function TaskManagerPage() {
     <div className="task-manager">
       <AppHeader />
       <main className="task-manager__main">
-        <StatisticsSection />
+        <StatisticsSection tasks={tasks} />
         <TaskInputSection onAddTask={handleAddTask} />
         <SearchSection value={searchQuery} onChange={setSearchQuery} />
         <FilterSection activeFilter={activeFilter} onFilterChange={setActiveFilter} />
