@@ -22,4 +22,8 @@ This repository is created for the FlyRank Front-End AI Engineering Internship.
 
 ## Author
 
+<<<<<<< HEAD
 Dev Rajpoot
+=======
+Dev Rajpoot
+>>>>>>> assignment-3-react-app
