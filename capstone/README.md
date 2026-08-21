@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EcoVoice — FlyRank Frontend AI Engineering
 
-## Getting Started
+## Repository Structure
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+flyrank-frontend-ai/
+├── flyrank-capstone/
+│   └── Eco-voice-/
+│       ├── Ecovoice v1/   ← Archived React + Vite prototype (DO NOT MODIFY)
+│       └── capstone/      ← Official Next.js architecture (Week 3+)
+├── assignments/
+├── docs/
+└── ...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Ecovoice v1 (Archived Prototype)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Located at `flyrank-capstone/Eco-voice-/Ecovoice v1/`.
 
-## Learn More
+This is the completed React + Vite prototype built during the early weeks of the FlyRank internship. It includes:
 
-To learn more about Next.js, take a look at the following resources:
+- Voice-first task management
+- Web Speech API integration
+- Gemini 2.5 Flash AI integration
+- Task CRUD via voice commands
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Status:** Stable prototype — archived for reference. Do not modify.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## capstone (Official Architecture)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Located at `flyrank-capstone/Eco-voice-/capstone/`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This is the official project used from **Week 3 onward** for all FlyRank assignments.
+
+### Tech Stack
+
+- **Next.js 16** (App Router)
+- **TypeScript**
+- **Tailwind CSS v4**
+- **React 19**
+- **Server Components** by default
+
+### Routes
+
+| Route        | Description                              |
+|--------------|------------------------------------------|
+| `/`          | Home — quick navigation overview         |
+| `/dashboard` | Dashboard — activity overview            |
+| `/tasks`     | Tasks — create and manage tasks          |
+| `/history`   | History — past tasks and activity log    |
+| `/settings`  | Settings — app configuration             |
+| `/health`    | Health — live API status display         |
+
+### API
+
+| Endpoint        | Method | Description              |
+|-----------------|--------|--------------------------|
+| `/api/health`   | GET    | Returns project status   |
+
+### Running Locally
+
+```bash
+cd flyrank-capstone/Eco-voice-/capstone
+npm install
+npm run dev
+```
+
+---
+
+## Future Work
+
+All future FlyRank assignments will continue inside the `capstone/` folder.
+
+The `Ecovoice v1/` folder remains as an archived reference and must not be modified.
+
+---
+
+## Author
+
+Dev Rajpoot  
+Computer Science Engineering Student — Bhopal, India  
+FlyRank Front-End AI Engineering Internship
