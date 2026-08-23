@@ -16,6 +16,7 @@ const navItems: NavItem[] = [
   { href: "/history", label: "History", icon: "📋" },
   { href: "/settings", label: "Settings", icon: "⚙️" },
   { href: "/health", label: "Health", icon: "💚" },
+  { href: "/playground", label: "Playground", icon: "🧪" },
 ];
 
 export default function Sidebar() {
