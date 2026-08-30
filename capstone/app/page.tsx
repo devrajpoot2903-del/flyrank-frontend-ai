@@ -1,100 +1,169 @@
-import type { Metadata } from "next";
-import PageHeader from "@/components/PageHeader";
-import Link from "next/link";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Home",
-  description:
-    "EcoVoice — a voice-first task management application built with Next.js.",
-};
+import Sidebar from "@/components/layout/Sidebar";
+import TopBar from "@/components/layout/TopBar";
+import VoiceHero from "@/components/voice/VoiceHero";
+import TaskBoard from "@/components/tasks/TaskBoard";
+import DailyProgress from "@/components/tasks/DailyProgress";
+import RecentActivity from "@/components/voice/RecentActivity";
+import { type Task } from "@/components/tasks/TaskCard";
 
-const quickLinks = [
-  { href: "/dashboard", label: "Dashboard", icon: "📊", description: "Overview of your activity" },
-  { href: "/tasks", label: "Tasks", icon: "✅", description: "Manage your tasks" },
-  { href: "/history", label: "History", icon: "📋", description: "View past activity" },
-  { href: "/settings", label: "Settings", icon: "⚙️", description: "Configure the app" },
-  { href: "/health", label: "Health", icon: "💚", description: "Check API status" },
+// ─── Hardcoded dummy data (Phase 2 — no localStorage / useTasks yet) ───────
+
+const DUMMY_TASKS_ALL: Task[] = [
+  {
+    id: "1",
+    title: "Complete DSA assignment",
+    priority: "high",
+    completed: false,
+    pinned: true,
+    category: "Study",
+  },
+  {
+    id: "2",
+    title: "Buy groceries from market",
+    priority: "medium",
+    completed: false,
+    category: "Personal",
+  },
+  {
+    id: "3",
+    title: "Call John at 3 PM",
+    priority: "high",
+    completed: true,
+    category: "Work",
+  },
+  {
+    id: "4",
+    title: "Review pull request #42",
+    priority: "medium",
+    completed: false,
+    category: "Work",
+  },
+  {
+    id: "5",
+    title: "Morning run 5km",
+    priority: "low",
+    completed: true,
+    category: "Health",
+  },
+  {
+    id: "6",
+    title: "Read chapter 3 of Clean Code",
+    priority: "low",
+    completed: false,
+    category: "Study",
+  },
 ];
+
+const DUMMY_COLUMNS = [
+  { id: "all", label: "All", tasks: DUMMY_TASKS_ALL },
+  {
+    id: "active",
+    label: "Active",
+    tasks: DUMMY_TASKS_ALL.filter((t) => !t.completed),
+  },
+  {
+    id: "done",
+    label: "Done",
+    tasks: DUMMY_TASKS_ALL.filter((t) => t.completed),
+  },
+];
+
+const DUMMY_ACTIVITY = [
+  {
+    id: "a1",
+    icon: "✅",
+    text: 'Marked "Call John at 3 PM" as complete',
+    time: "2 minutes ago",
+    type: "complete" as const,
+  },
+  {
+    id: "a2",
+    icon: "➕",
+    text: 'Created task "Review pull request #42"',
+    time: "18 minutes ago",
+    type: "create" as const,
+  },
+  {
+    id: "a3",
+    icon: "✅",
+    text: 'Marked "Morning run 5km" as complete',
+    time: "1 hour ago",
+    type: "complete" as const,
+  },
+  {
+    id: "a4",
+    icon: "🗑️",
+    text: 'Deleted task "Old project cleanup"',
+    time: "3 hours ago",
+    type: "delete" as const,
+  },
+  {
+    id: "a5",
+    icon: "✏️",
+    text: 'Updated priority of "DSA assignment" to High',
+    time: "Yesterday",
+    type: "update" as const,
+  },
+];
+
+const COMPLETED_COUNT = DUMMY_TASKS_ALL.filter((t) => t.completed).length;
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
   return (
-    <div>
-      <PageHeader
-        title="Welcome to EcoVoice"
-        description="A voice-first task management application. This is the capstone Next.js architecture used from Week 3 onward in the FlyRank internship."
-      />
+    /*
+     * Floating white card — wide, tall, and centered on the dark navy body.
+     * w-[95vw] max-w-[1400px] ensures it never bleeds to edges.
+     * min-h-[85vh] gives it proper dashboard presence.
+     * rounded-3xl + overflow-hidden clips all children cleanly.
+     */
+    <div className="w-full max-w-[1300px] h-[85vh] min-h-[700px] bg-white rounded-[2rem] shadow-2xl flex overflow-hidden">
+      {/*
+       * ── Three-column shell ──
+       * [Sidebar w-60] | [Center flex-1] | [Right panel w-72]
+       */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* ── Left: Sidebar ── */}
+        <Sidebar />
 
-      {/* Status badge */}
-      <div style={{ marginBottom: "32px" }}>
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "6px",
-            padding: "6px 14px",
-            backgroundColor: "var(--badge-bg)",
-            color: "var(--badge-text)",
-            borderRadius: "20px",
-            fontSize: "13px",
-            fontWeight: "600",
-          }}
-        >
-          <span>🟢</span> Capstone Skeleton · Next.js 16 · App Router
-        </span>
-      </div>
+        {/* ── Center + Right: share TopBar across them ── */}
+        <div className="flex-1 flex flex-col overflow-hidden bg-[#F9F8F6] rounded-2xl">
+          {/* TopBar spans center + right */}
+          <TopBar />
 
-      {/* Quick Navigation Grid */}
-      <section>
-        <h2
-          style={{
-            fontSize: "18px",
-            fontWeight: "600",
-            color: "var(--foreground)",
-            marginBottom: "16px",
-          }}
-        >
-          Quick Navigation
-        </h2>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-            gap: "16px",
-          }}
-        >
-          {quickLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "8px",
-                padding: "20px",
-                backgroundColor: "var(--card-bg)",
-                border: "1px solid var(--card-border)",
-                borderRadius: "12px",
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
-              <span style={{ fontSize: "28px" }}>{link.icon}</span>
-              <span
-                style={{
-                  fontSize: "15px",
-                  fontWeight: "600",
-                  color: "var(--foreground)",
-                }}
-              >
-                {link.label}
-              </span>
-              <span style={{ fontSize: "13px", color: "var(--muted)" }}>
-                {link.description}
-              </span>
-            </Link>
-          ))}
+          {/* Content row: center stage + right panel */}
+          <div className="flex flex-1 overflow-auto">
+            {/* ── Center Stage ── */}
+            <main className="flex-1 overflow-y-auto px-12 py-8">
+              {/* Mic is the absolute hero — centred with generous vertical space */}
+              <VoiceHero />
+
+              {/* Task sections sit below the mic without a card wrapper */}
+              <TaskBoard columns={DUMMY_COLUMNS} />
+            </main>
+
+            {/* ── Right Panel (w-72) ── */}
+            <aside className="w-72 flex-shrink-0 overflow-y-auto p-6 flex flex-col gap-6">
+              {/* Daily Progress card */}
+              <div className="bg-white rounded-2xl border border-stone-100 shadow-sm">
+                <DailyProgress
+                  completed={COMPLETED_COUNT}
+                  total={DUMMY_TASKS_ALL.length}
+                  streak={7}
+                />
+              </div>
+
+              {/* Recent Activity card */}
+              <div className="bg-white rounded-2xl border border-stone-100 shadow-sm">
+                <RecentActivity events={DUMMY_ACTIVITY} />
+              </div>
+            </aside>
+          </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

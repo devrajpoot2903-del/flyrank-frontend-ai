@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/Sidebar";
-import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: {
@@ -12,7 +10,7 @@ export const metadata: Metadata = {
     template: "%s | EcoVoice",
   },
   description:
-    "EcoVoice — a voice-first task management application. Capstone architecture built with Next.js for FlyRank.",
+    "EcoVoice — a voice-first task management application built with Next.js App Router. FlyRank Capstone.",
 };
 
 export default function RootLayout({
@@ -21,26 +19,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
-      <body>
-        <div
-          style={{
-            display: "flex",
-            minHeight: "100vh",
-          }}
-        >
-          <Sidebar />
-          <main
-            style={{
-              flex: 1,
-              padding: "40px 48px",
-              overflowY: "auto",
-              backgroundColor: "var(--background)",
-            }}
-          >
-            {children}
-          </main>
-        </div>
+    <html lang="en" className={inter.variable}>
+      {/* Dark body set in globals.css */}
+      <body className="min-h-screen bg-[#0B0F19] flex items-center justify-center p-4 sm:p-8 antialiased">
+        {children}
+
       </body>
     </html>
   );
