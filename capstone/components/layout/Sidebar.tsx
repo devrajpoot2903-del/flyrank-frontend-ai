@@ -2,11 +2,16 @@
 
 import { usePathname } from "next/navigation";
 import { CalendarDays, CalendarClock, History, Archive, Settings, Leaf, Plus } from "lucide-react";
+import { type TaskPriority } from "@/lib/hooks/useTasks";
 
 interface NavItem {
   id: string;
   label: string;
   icon: React.ReactNode;
+}
+
+interface SidebarProps {
+  onAddTask: (title: string, priority?: TaskPriority) => void;
 }
 
 const mainNav: NavItem[] = [
@@ -20,9 +25,16 @@ const bottomNav: NavItem[] = [
   { id: "settings", label: "Settings", icon: <Settings size={18} /> },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ onAddTask }: SidebarProps) {
   const pathname = usePathname();
   const activeId = pathname === "/" ? "today" : "today";
+
+  function handleNewTask() {
+    const title = window.prompt("New task title:");
+    if (title && title.trim()) {
+      onAddTask(title.trim());
+    }
+  }
 
   return (
     <aside
@@ -42,6 +54,7 @@ export default function Sidebar() {
       <div style={{ marginBottom: '32px' }}>
         <button
           aria-label="Add new task"
+          onClick={handleNewTask}
           className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#4B6B4A] text-white text-[14px] font-semibold hover:bg-[#3d5a3c] transition-colors duration-150 shadow-sm"
           style={{ padding: '12px 16px' }}
         >

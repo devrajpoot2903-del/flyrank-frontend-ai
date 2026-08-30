@@ -1,10 +1,4 @@
-interface ActivityEvent {
-  id: string;
-  icon: string;
-  text: string;
-  time: string;
-  type: "create" | "complete" | "delete" | "update";
-}
+import { type ActivityEvent } from "@/lib/hooks/useTasks";
 
 interface RecentActivityProps {
   events: ActivityEvent[];
@@ -12,7 +6,7 @@ interface RecentActivityProps {
 
 export default function RecentActivity({ events }: RecentActivityProps) {
   return (
-    <div className="p-5">
+    <div>
       <h2 className="text-[13px] font-semibold text-stone-700 mb-3">
         Recent Activity
       </h2>

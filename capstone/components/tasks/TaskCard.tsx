@@ -1,42 +1,27 @@
-import { CheckCircle2, Circle, Pin, Flag } from "lucide-react";
+﻿"use client";
 
-export type TaskPriority = "high" | "medium" | "low";
+// Re-export Task type from hook so existing imports still work.
+export type { Task, TaskPriority } from "@/lib/hooks/useTasks";
 
-export interface Task {
-  id: string;
-  title: string;
-  priority: TaskPriority;
-  completed: boolean;
-  pinned?: boolean;
-  category: string;
-}
-
-interface TaskCardProps {
-  task: Task;
-}
+import { CheckCircle2, Circle, Pin, Trash2 } from "lucide-react";
+import { type Task, type TaskPriority } from "@/lib/hooks/useTasks";
 
 const priorityConfig: Record<
   TaskPriority,
   { label: string; className: string; dotClass: string }
 > = {
-  high: {
-    label: "High",
-    className: "bg-red-50 text-red-600",
-    dotClass: "bg-red-500",
-  },
-  medium: {
-    label: "Medium",
-    className: "bg-amber-50 text-amber-600",
-    dotClass: "bg-amber-400",
-  },
-  low: {
-    label: "Low",
-    className: "bg-emerald-50 text-emerald-700",
-    dotClass: "bg-emerald-500",
-  },
+  high: { label: "High", className: "bg-red-50 text-red-600", dotClass: "bg-red-500" },
+  medium: { label: "Medium", className: "bg-amber-50 text-amber-600", dotClass: "bg-amber-400" },
+  low: { label: "Low", className: "bg-emerald-50 text-emerald-700", dotClass: "bg-emerald-500" },
 };
 
-export default function TaskCard({ task }: TaskCardProps) {
+interface TaskCardProps {
+  task: Task;
+  onToggle: (id: string) => void;
+  onDelete: (id: string) => void;
+}
+
+export default function TaskCard({ task, onToggle, onDelete }: TaskCardProps) {
   const p = priorityConfig[task.priority];
 
   return (
@@ -45,9 +30,10 @@ export default function TaskCard({ task }: TaskCardProps) {
         task.completed ? "opacity-60" : ""
       }`}
     >
-      {/* Completion toggle (dumb — no handler yet) */}
+      {/* Completion toggle */}
       <button
         aria-label={task.completed ? "Mark incomplete" : "Mark complete"}
+        onClick={() => onToggle(task.id)}
         className="mt-0.5 flex-shrink-0 text-stone-300 hover:text-emerald-600 transition-colors duration-150"
       >
         {task.completed ? (
@@ -67,36 +53,26 @@ export default function TaskCard({ task }: TaskCardProps) {
           >
             {task.title}
           </p>
-          {task.pinned && (
-            <Pin size={12} className="text-emerald-600 flex-shrink-0" />
-          )}
+          {task.pinned && <Pin size={12} className="text-emerald-600 flex-shrink-0" />}
         </div>
         <div className="flex items-center gap-2 mt-2">
-          {/* Priority badge */}
           <span
             className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${p.className}`}
           >
             <span className={`w-1.5 h-1.5 rounded-full ${p.dotClass}`} />
             {p.label}
           </span>
-          {/* Category badge */}
-          <span className="text-[11px] font-medium text-stone-400 bg-stone-100 px-2 py-0.5 rounded-full">
-            {task.category}
-          </span>
         </div>
       </div>
 
-      {/* Priority flag icon */}
-      <Flag
-        size={14}
-        className={`flex-shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150 ${
-          task.priority === "high"
-            ? "text-red-500"
-            : task.priority === "medium"
-              ? "text-amber-500"
-              : "text-emerald-500"
-        }`}
-      />
+      {/* Delete button (visible on hover) */}
+      <button
+        aria-label="Delete task"
+        onClick={() => onDelete(task.id)}
+        className="flex-shrink-0 mt-0.5 text-stone-200 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all duration-150"
+      >
+        <Trash2 size={14} />
+      </button>
     </div>
   );
 }
