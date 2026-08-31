@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { useState, useCallback } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
 import VoiceHero from "@/components/voice/VoiceHero";
@@ -7,6 +8,7 @@ import TaskBoard from "@/components/tasks/TaskBoard";
 import DailyProgress from "@/components/tasks/DailyProgress";
 import RecentActivity from "@/components/voice/RecentActivity";
 import { useTasks } from "@/lib/hooks/useTasks";
+import { useVoice, type VoiceState } from "@/lib/hooks/useVoice";
 
 export default function HomePage() {
   const {
@@ -19,14 +21,35 @@ export default function HomePage() {
     togglePin,
   } = useTasks();
 
+  const [voiceState, setVoiceState] = useState<VoiceState>("idle");
+  const [lastTranscript, setLastTranscript] = useState("");
+
+  const { start, stop } = useVoice({
+    onStateChange: setVoiceState,
+    onTranscript: setLastTranscript,
+    tasks,
+    addTask,
+    deleteTask,
+    toggleTaskCompletion,
+    setPriority,
+    togglePin,
+  });
+
+  const handleToggleMic = useCallback(() => {
+    if (voiceState === "idle" || voiceState === "error") {
+      start();
+    } else {
+      stop();
+    }
+  }, [voiceState, start, stop]);
+
   const activeTasks = tasks.filter((t) => !t.completed);
-  const doneTasks = tasks.filter((t) => t.completed);
-  const completedCount = doneTasks.length;
+  const doneTasks   = tasks.filter((t) => t.completed);
 
   const columns = [
-    { id: "all", label: "All", tasks },
+    { id: "all",    label: "All",    tasks },
     { id: "active", label: "Active", tasks: activeTasks },
-    { id: "done", label: "Done", tasks: doneTasks },
+    { id: "done",   label: "Done",   tasks: doneTasks },
   ];
 
   return (
@@ -39,7 +62,11 @@ export default function HomePage() {
       <main className="flex-1 h-full flex flex-col overflow-y-auto border-r border-stone-100">
         <TopBar />
         <div className="flex-1 overflow-y-auto">
-          <VoiceHero />
+          <VoiceHero
+            voiceState={voiceState}
+            onToggleMic={handleToggleMic}
+            lastTranscript={lastTranscript}
+          />
           <TaskBoard
             columns={columns}
             onToggle={toggleTaskCompletion}
@@ -54,7 +81,7 @@ export default function HomePage() {
       <aside className="w-[340px] h-full flex flex-col gap-6 p-8 border-l border-stone-100 bg-stone-50/30 flex-shrink-0 overflow-y-auto">
         <div className="p-6 bg-white rounded-2xl border border-stone-100 shadow-sm">
           <DailyProgress
-            completed={completedCount}
+            completed={doneTasks.length}
             total={tasks.length}
             streak={7}
           />

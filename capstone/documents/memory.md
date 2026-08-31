@@ -3,8 +3,8 @@
 **AI INSTRUCTION:** Read this file to understand the current state of the project before writing any code. Update this file ONLY when explicitly instructed by the user.
 
 ## Current Status
-- **Active Phase:** Phase 3 Complete. 
-- **Next Action:** Starting Phase 4.
+- **Active Phase:** Phase 4 (Voice Pipeline & Local Parser)
+- **Completed Milestones:** Add checkmark for Phase 3.
 
 ## Completed Milestones
 - [x] Initialized Next.js `capstone` directory.

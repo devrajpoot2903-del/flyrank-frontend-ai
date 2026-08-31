@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export function useLocalStorage<T>(
   key: string,
@@ -9,6 +9,7 @@ export function useLocalStorage<T>(
   const [storedValue, setStoredValue] = useState<T>(initialValue);
   const [mounted, setMounted] = useState(false);
 
+  // Read from localStorage after mount to avoid SSR hydration mismatch.
   useEffect(() => {
     setMounted(true);
     try {
@@ -21,18 +22,24 @@ export function useLocalStorage<T>(
     }
   }, [key]);
 
-  const setValue = (value: T | ((prev: T) => T)) => {
+  // Sync state → localStorage whenever it changes (after mount).
+  useEffect(() => {
+    if (!mounted) return;
     try {
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      if (mounted) {
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
-      }
+      window.localStorage.setItem(key, JSON.stringify(storedValue));
     } catch (err) {
       console.warn(`[useLocalStorage] Failed to write key "${key}":`, err);
     }
-  };
+  }, [key, storedValue, mounted]);
+
+  const setValue = useCallback(
+    (value: T | ((prev: T) => T)) => {
+      setStoredValue((prev) => {
+        return value instanceof Function ? value(prev) : value;
+      });
+    },
+    []
+  );
 
   return [storedValue, setValue];
 }

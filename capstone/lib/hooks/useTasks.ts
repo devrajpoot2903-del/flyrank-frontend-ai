@@ -41,6 +41,7 @@ export function useTasks() {
         id: crypto.randomUUID(),
         time: timeLabel(),
       };
+      // Functional update — never captures stale activity array.
       setActivity((prev) => [entry, ...prev].slice(0, 20));
     },
     [setActivity]
@@ -56,6 +57,7 @@ export function useTasks() {
         pinned: false,
         createdAt: nowISO(),
       };
+      // Functional update — never overwrites concurrent adds.
       setTasks((prev) => [task, ...prev]);
       pushActivity({ icon: "➕", text: `Task "${task.title}" added.`, type: "create" });
     },
@@ -67,7 +69,11 @@ export function useTasks() {
       setTasks((prev) => {
         const task = prev.find((t) => t.id === id);
         if (task) {
-          pushActivity({ icon: "🗑️", text: `Deleted task "${task.title}".`, type: "delete" });
+          pushActivity({
+            icon: "🗑️",
+            text: `Deleted task "${task.title}".`,
+            type: "delete",
+          });
         }
         return prev.filter((t) => t.id !== id);
       });
@@ -122,5 +128,13 @@ export function useTasks() {
     [setTasks]
   );
 
-  return { tasks, activity, addTask, deleteTask, toggleTaskCompletion, setPriority, togglePin };
+  return {
+    tasks,
+    activity,
+    addTask,
+    deleteTask,
+    toggleTaskCompletion,
+    setPriority,
+    togglePin,
+  };
 }
