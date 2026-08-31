@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "tailwindcss";
+@source "../components";
 
 /* ─── EcoVoice Design System: Cream & Sage Green ─── */
 

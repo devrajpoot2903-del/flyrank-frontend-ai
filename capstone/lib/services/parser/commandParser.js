@@ -64,6 +64,7 @@ function normalise(text) {
     .replace(/[.!?]+$/, '');
 }
 
+
 // ---------------------------------------------------------------------------
 // 2. PRIORITY SIGNAL DETECTION
 // ---------------------------------------------------------------------------
@@ -641,14 +642,14 @@ export function parseCommand(rawText) {
   // ── Simple intents: no payload extraction needed ───────────────────────────
   if (intent === 'UNDO') return { type: 'UNDO' };
   if (intent === 'ENTER_CHAT_MODE') return { type: 'ENTER_CHAT_MODE' };
-  if (intent === 'EXIT_CHAT_MODE')  return { type: 'EXIT_CHAT_MODE' };
-  if (intent === 'SELF_INTRO')      return { type: 'SELF_INTRO' };
-  if (intent === 'DELETE_ALL_TASKS')  return { type: 'DELETE_ALL_TASKS' };
+  if (intent === 'EXIT_CHAT_MODE') return { type: 'EXIT_CHAT_MODE' };
+  if (intent === 'SELF_INTRO') return { type: 'SELF_INTRO' };
+  if (intent === 'DELETE_ALL_TASKS') return { type: 'DELETE_ALL_TASKS' };
   if (intent === 'COMPLETE_ALL_TASKS') return { type: 'COMPLETE_ALL_TASKS' };
   if (intent === 'ARCHIVE_ALL_TASKS') return { type: 'ARCHIVE_ALL_TASKS' };
   if (intent === 'PIN_ALL_TASKS') return { type: 'PIN_ALL_TASKS' };
   if (intent === 'UNPIN_ALL_TASKS') return { type: 'UNPIN_ALL_TASKS' };
-  if (intent === 'CLEAR_SEARCH')    return { type: 'CLEAR_SEARCH' };  // Bug 2
+  if (intent === 'CLEAR_SEARCH') return { type: 'CLEAR_SEARCH' };  // Bug 2
 
   // ── D3 SEARCH_TASKS: extract query after keyword ───────────────────────────
   if (intent === 'SEARCH_TASKS') {

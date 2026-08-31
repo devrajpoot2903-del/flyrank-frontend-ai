@@ -1,6 +1,10 @@
 import { Search, HelpCircle, Settings } from "lucide-react";
 
-export default function TopBar() {
+interface TopBarProps {
+  onHelp?: () => void;
+}
+
+export default function TopBar({ onHelp }: TopBarProps) {
   return (
     <header className="h-20 flex items-center px-8 gap-4 flex-shrink-0 bg-[#F9F8F6]">
       <span className="text-[18px] font-bold text-stone-800 mr-2">EcoVoice</span>
@@ -20,7 +24,7 @@ export default function TopBar() {
         </div>
 
         <div className="flex items-center gap-4 text-stone-400">
-          <button className="hover:text-stone-800 transition-colors"><HelpCircle size={22} /></button>
+          <button aria-label="Help" onClick={onHelp} className="hover:text-stone-800 transition-colors"><HelpCircle size={22} /></button>
           <button className="hover:text-stone-800 transition-colors"><Settings size={22} /></button>
         </div>
 
