@@ -20,7 +20,7 @@ import { parseCommand } from "@/lib/services/parser/commandParser";
 
 // ─── Config ────────────────────────────────────────────────────────────────────
 
-const API_KEY = process.env.NEXT_PUBLIC_AI_API_KEY;
+const API_KEY = process.env.AI_API_KEY;
 const ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
 
 // 💡 [DEV NOTE]: Model updated to Groq's active replacement model with EXACT correct slug.
