@@ -1,30 +1,18 @@
 /**
 * aiCommandProcessor.js — EcoVoice AI Command Layer (Next.js / Groq)
 * -------------------------------------------------------------------------
-* Updated for Groq's active 2026 API models.
-* Model: gpt-oss-20b (Replaces decommissioned Llama3 models)
-*
-* CONTRACT — every result includes a `response` field:
-*   { type: "CREATE_TASK",    task: string,  priority: "normal"|"high", response: string }
-*   { type: "DELETE_TASK",    query: string, response: string }
-*   { type: "COMPLETE_TASK",  query: string, response: string }
-*   { type: "UNCOMPLETE_TASK",query: string, response: string }
-*   { type: "PIN_TASK",       query: string, response: string }
-*   { type: "UNPIN_TASK",     query: string, response: string }
-*   { type: "SET_PRIORITY",   query: string, priority: "normal"|"high", response: string }
-*   { type: "CHAT",           response: string }
-*   { type: "UNKNOWN" }
+* 💡 [DEV NOTE]: API key MUST use NEXT_PUBLIC_ prefix to work in the browser.
+* Model updated to gpt-oss-20b as per Groq's active replacement models.
 */
 
 import { parseCommand } from "@/lib/services/parser/commandParser";
 
 // ─── Config ────────────────────────────────────────────────────────────────────
 
-const API_KEY = process.env.AI_API_KEY;
+// 💡 [DEV NOTE]: Agar NEXT_PUBLIC_ nahi lagaoge, toh Next.js isko browser mein undefined kar dega.
+const API_KEY = process.env.NEXT_PUBLIC_AI_API_KEY;
 const ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
-
-// 💡 [DEV NOTE]: Model updated to Groq's active replacement model with EXACT correct slug.
-const MODEL = "openai/gpt-oss-20b";
+const MODEL = "gpt-oss-20b";
 
 if (typeof window !== "undefined") {
   if (API_KEY && API_KEY !== "your_openrouter_api_key_here") {
@@ -32,11 +20,10 @@ if (typeof window !== "undefined") {
   } else {
     console.warn("[EcoVoice/AI] API key missing — fallback to rule-based parser.");
   }
+
 }
 
-
-// ─── System prompt (preserved from V1 intact) ──────────────────────────────────
-
+// ─── System prompt ─────────────────────────────────────────────────────────────
 const SYSTEM_PROMPT = `You are EcoVoice — a warm, intelligent, voice-first productivity assistant.
 
 You understand English, Hindi, and Hinglish naturally.
@@ -130,7 +117,6 @@ SET_PRIORITY (normal) → "Done, priority has been set back to normal."
 CHAT (hello) → "Hey! Just speak naturally and I'll take care of your tasks."
 CHAT (what can you do) → "I can create, complete, delete, pin, and prioritise your tasks using natural voice commands."`;
 
-
 // ─── Session memory (last 10 turn pairs) ───────────────────────────────────────
 
 const MAX_HISTORY = 10;
@@ -144,6 +130,7 @@ export function clearSessionHistory() {
   _sessionHistory.length = 0;
 }
 
+// 💡 [DEV NOTE]: Pushes recent voice commands and AI responses to memory for context
 function pushHistory(userText, modelJSON) {
   _sessionHistory.push(
     { role: "user", content: userText },
@@ -154,7 +141,7 @@ function pushHistory(userText, modelJSON) {
   }
 }
 
-// 💡 [DEV NOTE]: Ye function history maintain karta hai. Pehle ye call nahi ho raha tha, ab call hoga.
+// 💡 [DEV NOTE]: Prepares the message array with system prompt, history, and new input
 function buildMessages(userText) {
   return [
     { role: "system", content: SYSTEM_PROMPT },
@@ -163,18 +150,14 @@ function buildMessages(userText) {
   ];
 }
 
-
 // ─── JSON extractor ────────────────────────────────────────────────────────────
 
-// 💡 [DEV NOTE]: Agar AI galti se markdown (```json) bhej de, toh ye function usko clean karega taaki app crash na ho.
+// 💡 [DEV NOTE]: Strips markdown code blocks if the AI accidentally wraps the JSON
 function extractJSON(raw) {
   if (!raw) return null;
-
-  // Try direct parse first
   try {
     return JSON.parse(raw);
   } catch (e) {
-    // If it fails, strip backticks and try again
     const stripped = raw.replace(/```(?:json)?/gi, "").trim();
     const start = stripped.indexOf("{");
     const end = stripped.lastIndexOf("}");
@@ -186,7 +169,6 @@ function extractJSON(raw) {
     }
   }
 }
-
 
 // ─── Missing target helper ────────────────────────────────────────────────────
 
@@ -206,7 +188,6 @@ function missingTarget(intent) {
     prompt: MISSING_TARGET_PROMPTS[intent] ?? "Which task did you mean?",
   };
 }
-
 
 // ─── JSON → internal command object ───────────────────────────────────────────
 
@@ -275,25 +256,17 @@ function mapToCommand(json) {
   }
 }
 
-
 // ─── Failure tracking ──────────────────────────────────────────────────────────
-
-let _consecutiveFailures = 0;
-const MAX_FAILURES_BEFORE_WARN = 2;
 
 export function isAIAvailable() {
   return !!(API_KEY && API_KEY !== "your_openrouter_api_key_here");
 }
-
 
 // ─── Public API ────────────────────────────────────────────────────────────────
 
 /**
  * Process raw transcript through Groq.
  * Falls back to local parser when the key is missing or the API fails.
- *
- * @param {string} transcript
- * @returns {Promise<object>}
  */
 export const processWithAI = async (transcript) => {
   if (!API_KEY) {
@@ -309,12 +282,8 @@ export const processWithAI = async (transcript) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        // 💡 [DEV NOTE]: Automatically uses the active model configured at the top
         model: MODEL,
-
-        // 💡 [DEV NOTE]: Used buildMessages() instead of hardcoded array so context/history is maintained
         messages: buildMessages(transcript),
-
         temperature: 0.1,
         max_tokens: 150,
       })
@@ -332,7 +301,6 @@ export const processWithAI = async (transcript) => {
       throw new Error("No content received from Groq.");
     }
 
-    // 💡 [DEV NOTE]: Uses extractJSON to prevent crashes if AI outputs markdown formatting
     const cleanedJson = extractJSON(content);
 
     if (!cleanedJson) {
@@ -343,7 +311,7 @@ export const processWithAI = async (transcript) => {
     // 💡 [DEV NOTE]: Maps raw API JSON into your app's strict command format
     const finalCommand = mapToCommand(cleanedJson);
 
-    // 💡 [DEV NOTE]: Pushes to memory so AI can understand follow-up commands like "Delete it"
+    // 💡 [DEV NOTE]: Pushes to memory so AI can understand follow-up commands
     pushHistory(transcript, cleanedJson);
 
     return finalCommand;
