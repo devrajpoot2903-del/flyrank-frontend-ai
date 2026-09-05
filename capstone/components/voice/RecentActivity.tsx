@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useRef } from "react";
 
@@ -8,7 +8,7 @@ export interface SessionLog {
   id: string;
   type: "task" | "user_voice" | "ai_response";
   message: string;
-  timestamp: Date;
+  timestamp: Date | string;
 }
 
 interface RecentActivityProps {
@@ -26,8 +26,11 @@ const BADGE: Record<
   task:        { label: "TASK",  icon: "📋", pill: "bg-stone-100 text-stone-500",    text: "text-stone-600" },
 };
 
-function timeLabel(d: Date): string {
-  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+function timeLabel(d: Date | string): string {
+  const date = d instanceof Date ? d : new Date(d);
+  return isNaN(date.getTime())
+    ? ""
+    : date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
 // ─── Component ─────────────────────────────────────────────────────────────────
@@ -41,7 +44,7 @@ export default function RecentActivity({ logs }: RecentActivityProps) {
   }, [logs]);
 
   return (
-    <div>
+    <div className="flex flex-col h-full">
       <h2 className="text-[13px] font-semibold text-stone-700 mb-3">
         Activity Log
       </h2>
@@ -54,7 +57,7 @@ export default function RecentActivity({ logs }: RecentActivityProps) {
           </p>
         </div>
       ) : (
-        <ol className="flex flex-col gap-2.5 max-h-52 overflow-y-auto pr-0.5">
+        <ol className="flex flex-col gap-2.5 overflow-y-auto pr-0.5 flex-1 min-h-0">
           {logs.map((log) => {
             const b = BADGE[log.type];
             return (
