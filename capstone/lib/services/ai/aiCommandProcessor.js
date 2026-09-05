@@ -12,7 +12,7 @@ import { parseCommand } from "@/lib/services/parser/commandParser";
 // 💡 [DEV NOTE]: Agar NEXT_PUBLIC_ nahi lagaoge, toh Next.js isko browser mein undefined kar dega.
 const API_KEY = process.env.NEXT_PUBLIC_AI_API_KEY;
 const ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
-const MODEL = "gemma2-9b-it";
+const MODEL = "openai/gpt-oss-20b";
 
 if (typeof window !== "undefined") {
   if (API_KEY && API_KEY !== "your_openrouter_api_key_here") {
